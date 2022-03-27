@@ -1,0 +1,22 @@
+#画气泡图 
+library(ggplot2)
+#设置路径
+setwd("G:/R_exercise/KEGG/GO") 
+#读取csv文件
+yourdata<-read.csv("TOP20.csv")
+#画图
+P <- ggplot(yourdata, aes(x=GeneRation, y=Term,  size=Count, color=P_Value))+ #确定x轴参数，y轴参数，圆圈大小根据基因数改变
+  geom_point()+ #画点图 geom_bar   geom_point()
+  scale_colour_gradient(low="blue",high="red") + #图形颜色范围 
+  labs(color=expression(P_Value),size="Count", geom_point(shape=1),x="GeneRation",y="Term",title="Top 20 GO enrichment",color="black")+
+  theme_bw() +#图片主题
+  theme(axis.text.x = element_text(color="black", size=10), #修改X轴的元素格式，size修改横纵坐标轴上文字大小，color设置颜色，angle设置角度,face粗体 斜体，family 字体
+        axis.text.y = element_text(color="black",size=10))+#纵坐标轴同理
+  #facet_grid(Database~., scale="free")#选择添加分面，不需要可删除
+
+
+#保存图片
+ggsave("dotplot.png",width=7,height=6)#保存为png
+ggsave("dotplot.pdf")#保存为pdf
+ggsave("dotplot.tiff",width=7,height=6) #保存为tiff#
+png("dotplot.png", res=100)
