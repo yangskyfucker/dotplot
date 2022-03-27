@@ -1,0 +1,611 @@
+#???ù???·??
+setwd("G:\\杜老师文件\\2022.3.21\\DamID\\DAMID")
+#??????????R??
+library(ChIPseeker)
+library(GenomicFeatures)
+library(Vennerable)
+library(ggplot2)
+library(ggupset)
+library(ggplotify)
+library(TxDb.Dmelanogaster.UCSC.dm6.ensGene)
+library(org.Dm.eg.db)
+library("TxDb.Hsapiens.UCSC.hg19.knownGene")
+library(VennDiagram)
+library(ggimage)
+library(dplyr)
+library(clusterProfiler)
+library(msigdbr)
+library(ReactomePA)
+library(AnnotationDbi)
+library(enrichplot)
+source("http://bioconductor.org/biocLite.R")
+
+
+biocLite("clusterProfiler")
+
+
+
+
+
+
+
+install.packages("AnnotationDbi")
+BiocManager::install(update=TRUE, ask=FALSE)
+library("BiocVersion")
+BiocManager::install(version = "grid")
+
+BiocManager::install(version = "VennDiagram")
+library(devtools)
+
+install.packages("devtools",repos="http://mirrors.tuna.tsinghua.edu.cn/CRAN/")
+install_github("js229/Vennerable")
+library(RBGL)
+install.packages("Vennerable")
+.libPaths()
+.libPaths("C:/Users/yangskyfucker/Documents/R/win-library/4.1")
+BiocManager::install("biocLite")
+
+
+
+#source("http://bioconductor.org/biocLite.R")
+#biocLite('package_name')
+#install.packages("Vennerable", repos="http://R-Forge.R-project.org")
+BiocManager::install("enrichplot",force = T)
+
+library(org.Dm.eg.db)
+ls("package:org.Dm.eg.GENENAME")
+geneAnnotation <- createGeneAnnotation(TxDb = TxDb.Dmelanogaster.UCSC.dm6.ensGene, OrgDb = org.Dm.eg.db)
+################ ?????߹?Ӭע?Ͱ?????txdb?ļ?####################
+
+require(TxDb.Dmelanogaster.UCSC.dm6.ensGene)
+txdb <- TxDb.Dmelanogaster.UCSC.dm6.ensGene
+txdb
+fly
+require(TxDb.Hsapiens.UCSC.hg19.knownGene)
+txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
+require(TxDb.Hsapiens.UCSC.hg19.knownGene)
+txdb2 <- TxDb.Hsapiens.UCSC.hg19.knownGene
+
+
+require(GenomicFeatures)
+txdb<- makeTxDbFromUCSC(genome="dm3", table="refGene")
+
+
+hg19.refseq.db <- makeTxDbFromUCSC(genome="hg19", table="refGene")
+
+                                      
+download.file("http://ftp.ensembl.org/pub/release-103/gff3/drosophila_melanogaster/Drosophila_melanogaster.BDGP6.32.103.chr.gff3.gz")
+
+
+
+fly <- makeTxDbFromGFF("Drosophila_melanogaster.BDGP6.32.103.chr.gtf")
+
+#########?ñ???gff?ļ?????gff?ļ?#############
+fly <- makeTxDbFromGFF("GCF_000001215.4_Release_6_plus_ISO1_MT_genomic.gff")
+
+
+#??????Ĭ?Ϻ???ע?ͣ?
+###??ȡ?????ļ?
+files<- getSampleFiles()
+#?鿴?ļ??б?
+files
+#????peakע??,Head2
+peakc929<- readPeakFile(files[[1]])
+peakDVpdf<- readPeakFile(files[[2]])
+peakR11H18<- readPeakFile(files[[3]])
+peakR6<- readPeakFile(files[[4]])
+peakbodywt1<- readPeakFile(files[[5]])
+peakbodywt2<- readPeakFile(files[[6]])
+peakheadclk1<- readPeakFile(files[[7]])
+peakheadclk2<- readPeakFile(files[[8]])
+peakheadcyc1<- readPeakFile(files[[9]])
+peakheadcyc2<- readPeakFile(files[[10]])
+peakclkwt1<- readPeakFile(files[[11]])
+peakclkwt1<- readPeakFile(files[[12]])
+peakHead2<- readPeakFile(files[[13]])
+peakTsetis2<- readPeakFile(files[[14]])
+
+
+peakAnnoListc992 <- lapply(files[[1]],TxDb=txdb,tssRegion=c(-3000, 3000),annotatePeak,verbose=FALSE,addFlankGeneInfo=TRUE, flankDistance=5000,annoDb="org.Dm.eg.db")
+peakAnnoListDVpdf <- lapply(files[[2]],TxDb=txdb,tssRegion=c(-3000, 3000),annotatePeak,verbose=FALSE,addFlankGeneInfo=TRUE, flankDistance=5000,annoDb="org.Dm.eg.db")
+peakAnnoListR11H18 <- lapply(files[[3]],TxDb=txdb,tssRegion=c(-3000, 3000),annotatePeak,verbose=FALSE,addFlankGeneInfo=TRUE, flankDistance=5000,annoDb="org.Dm.eg.db")
+peakAnnoListR6 <- lapply(files[[4]],TxDb=txdb,tssRegion=c(-3000, 3000),annotatePeak,verbose=FALSE,addFlankGeneInfo=TRUE, flankDistance=5000,annoDb="org.Dm.eg.db")
+peakAnnoListbodywt1 <- lapply(files[[5]],TxDb=txdb,tssRegion=c(-3000, 3000),annotatePeak,verbose=FALSE,addFlankGeneInfo=TRUE, flankDistance=5000,annoDb="org.Dm.eg.db")
+peakAnnoListbodywt2 <- lapply(files[[6]],TxDb=txdb,tssRegion=c(-3000, 3000),annotatePeak,verbose=FALSE,addFlankGeneInfo=TRUE, flankDistance=5000,annoDb="org.Dm.eg.db")
+peakAnnoListheadclk1 <- lapply(files[[7]],TxDb=txdb,tssRegion=c(-3000, 3000),annotatePeak,verbose=FALSE,addFlankGeneInfo=TRUE, flankDistance=5000,annoDb="org.Dm.eg.db")
+peakAnnoListheadclk2 <- lapply(files[[8]],TxDb=txdb,tssRegion=c(-3000, 3000),annotatePeak,verbose=FALSE,addFlankGeneInfo=TRUE, flankDistance=5000,annoDb="org.Dm.eg.db")
+peakAnnoListheadcyc1 <- lapply(files[[9]],TxDb=txdb,tssRegion=c(-3000, 3000),annotatePeak,verbose=FALSE,addFlankGeneInfo=TRUE, flankDistance=5000,annoDb="org.Dm.eg.db")
+peakAnnoListheadcyc2 <- lapply(files[[10]],TxDb=txdb,tssRegion=c(-3000, 3000),annotatePeak,verbose=FALSE,addFlankGeneInfo=TRUE, flankDistance=5000,annoDb="org.Dm.eg.db")
+peakAnnoListheadwt1 <- lapply(files[[11]],TxDb=txdb,tssRegion=c(-3000, 3000),annotatePeak,verbose=FALSE,addFlankGeneInfo=TRUE, flankDistance=5000,annoDb="org.Dm.eg.db")
+peakAnnoListheadwt2 <- lapply(files[[12]],TxDb=txdb,tssRegion=c(-3000, 3000),annotatePeak,verbose=FALSE,addFlankGeneInfo=TRUE, flankDistance=5000,annoDb="org.Dm.eg.db")
+peakAnnoListHead2 <- lapply(files[[13]],TxDb=txdb,tssRegion=c(-3000, 3000),annotatePeak,verbose=FALSE,addFlankGeneInfo=TRUE, flankDistance=5000,annoDb="org.Dm.eg.db")
+peakAnnoListTestis2 <- lapply(files[[14]],TxDb=txdb,tssRegion=c(-3000, 3000),annotatePeak,verbose=FALSE,addFlankGeneInfo=TRUE, flankDistance=5000,annoDb="org.Dm.eg.db")
+
+
+
+
+
+
+peakAnnoListhead2 <- lapply(files[[4]], annotatePeak,TxDb=fly,tssRegion=c(-3000, 3000),verbose=FALSE,addFlankGeneInfo=TRUE,flankDistance=5000,annoDb="org.Dm.eg.db")
+peakAnnoListhead2 <- lapply(files[[3]], annotatePeak,TxDb=fly,tssRegion=c(-3000, 3000),verbose=FALSE,addFlankGeneInfo=TRUE,flankDistance=5000,annoDb="org.Dm.eg.db")
+
+
+peakAnnoListTESTIS1 <- lapply(files[[3]], annotatePeak,TxDb=fly,tssRegion=c(-3000, 3000),verbose=FALSE,addFlankGeneInfo=TRUE,flankDistance=5000,annoDb="org.Dm.eg.db")
+peakAnnoListTESTIS2 <- lapply(files[[4]], annotatePeak,TxDb=fly,tssRegion=c(-3000, 3000),verbose=FALSE,addFlankGeneInfo=TRUE,flankDistance=5000,annoDb="org.Dm.eg.db")
+#д??????
+peakAnnoList
+write.table(peakAnnoListc992, file = 'c992.xls',sep = '\t', quote = FALSE, row.names = FALSE)
+write.table(peakAnnoListDVpdf, file = 'DVpdf.xls',sep = '\t', quote = FALSE, row.names = FALSE)
+write.table(peakAnnoListR11H18, file = 'R11H18.xls',sep = '\t', quote = FALSE, row.names = FALSE)
+write.table(peakAnnoListR6, file = 'R6.xls',sep = '\t', quote = FALSE, row.names = FALSE)
+write.table(peakAnnoListbodywt1, file = 'bodywt1.xls',sep = '\t', quote = FALSE, row.names = FALSE)
+write.table(peakAnnoListbodywt2, file = 'bodywt2.xls',sep = '\t', quote = FALSE, row.names = FALSE)
+write.table(peakAnnoListheadclk1, file = 'headclk1.xls',sep = '\t', quote = FALSE, row.names = FALSE)
+write.table(peakAnnoListheadclk2, file = 'headclk2.xls',sep = '\t', quote = FALSE, row.names = FALSE)
+write.table(peakAnnoListheadcyc1, file = 'headcyc1.xls',sep = '\t', quote = FALSE, row.names = FALSE)
+write.table(peakAnnoListheadcyc2, file = 'headcyc2.xls',sep = '\t', quote = FALSE, row.names = FALSE)
+write.table(peakAnnoListheadwt1, file = 'headwt1.xls',sep = '\t', quote = FALSE, row.names = FALSE)
+write.table(peakAnnoListheadwt2, file = 'headwt2.xls',sep = '\t', quote = FALSE, row.names = FALSE)
+write.table(peakAnnoListHead2, file = 'Head2.xls',sep = '\t', quote = FALSE, row.names = FALSE)
+write.table(peakAnnoListTestis2, file = 'Testis2.xls',sep = '\t', quote = FALSE, row.names = FALSE)
+
+
+
+write.table(peakAnnoListhead2, file = 'TESTIS??4.xls',sep = '\t', quote = FALSE, row.names = FALSE)
+write.table(peakAnnoListTESTIS1, file = 'TESTIS_1.xls',sep = '\t', quote = FALSE, row.names = FALSE)
+write.table(peakAnnoListTESTIS2, file = 'TESTIS_2.xls',sep = '\t', quote = FALSE, row.names = FALSE)
+#??ͼ#
+plotAnnoBar(peakAnnoListc992)
+ggsave("plotAnnoBar.pdf")
+#####feature Distribution###########
+plotAnnoBar(peakAnnoList)
+##################peakAnnoList###########
+plotDistToTSS(peakAnnoList)
+#??ͼ
+plotAnnoPie(peakAnnoListc992)
+######################
+############????ע??################
+
+
+#????????
+peakAnnoList <- lapply(files, annotatePeak, TxDb=txdb,
+                       tssRegion=c(-3000, 3000),  annoDb="org.Dm.eg.db")
+
+
+plotAnnoBar(peakAnnoList)
+ggsave("plotAnnoBar.pdf")
+plotDistToTSS(peakAnnoList)
+ggsave("plotDistToTSS.ppt")
+####??ͼ 4
+peakAnno1 <- annotatePeak(files[[1]], 
+                         tssRegion=c(-3000, 3000),
+                         TxDb=txdb, annoDb="org.Dm.eg.db")
+peakAnno2 <- annotatePeak(files[[2]], 
+                          tssRegion=c(-3000, 3000),
+                          TxDb=txdb, annoDb="org.Dm.eg.db")
+peakAnno3 <- annotatePeak(files[[3]], 
+                          tssRegion=c(-3000, 3000),
+                          TxDb=txdb, annoDb="org.Dm.eg.db")
+peakAnno4 <- annotatePeak(files[[4]], 
+                          tssRegion=c(-3000, 3000),
+                          TxDb=txdb, annoDb="org.Dm.eg.db")
+vennpie(peakAnno2)
+plotAnnoPie(peakAnno3)
+ggsave("R11.tiff")
+upsetplot(peakAnno4)
+upsetplot(peakAnno4, vennpie=TRUE)
+plotPeakProf2(files, upstream = rel(0.2), downstream = rel(0.2),
+              conf = 0.95, by = "gene", type = "body",
+              TxDb = txdb, facet = "row", nbin = 800)
+dev.off()
+##############################
+#############################
+#####################
+genebody <- getBioRegion(TxDb = txdb,
+                         by = "gene",
+                         type = "body")
+
+matrix_no_flankextension <- getTagMatrix(peak,windows = genebody, nbin = 800)
+plotPeakProf(matrix_no_flankextension,conf = 0.95)
+
+exon <- getTagMatrix(peak = peak, 
+                              TxDb = txdb,
+                              upstream = rel(0.2),
+                              downstream = rel(0.2), 
+                              type = "body",
+                              by = "exon",
+                              nbin = 50)
+
+plotPeakProf(tagMatrix = exon, conf = 0.95)
+TTS_matrix <- getTagMatrix(peak = peak, 
+                           TxDb = txdb,
+                           upstream = 3000,
+                           downstream = 3000, 
+                           type = "body",
+                           by = "gene",nbin=50)
+
+plotPeakProf(tagMatrix = TTS_matrix, conf = 0.95)
+
+##################################################
+###################################
+mySymbols <- mget(genes,
+                  org.Dm.egSYMBOL )#这个是可以选择的，选择不同，转换的ID类型也不一样
+ls("org.Dm.eg.db")
+
+
+bedfile2222=getSampleFiles()
+seq=lapply(bedfile2222, readPeakFile)
+genes=lapply(seq, function(i) 
+  seq2gene(i, c(-1000, 3000), 3000, TxDb=txdb2))
+
+
+#####################################################################
+########################GO分析############################
+#####################################################################
+#####注释基因#########################################
+peakAnnoList <- lapply(files, annotatePeak, TxDb=txdb,
+                       tssRegion=c(-3000, 3000),  annoDb="org.Dm.eg.db")
+genes= lapply(peakAnnoList, function(i) as.data.frame(i)$SYMBOL)
+
+######GO四组比较分析#################################
+ego2 <- compareCluster(gene = genes,#显著差异表达基因的Ensembl ID
+                OrgDb=org.Dm.eg.db,     #注释数据库        #富集的GO条目至少要包含10个基因，可以修改
+                fun           = "enrichGO",
+                keyType='SYMBOL')
+#保存结果########
+write.csv(as.data.frame(ego2),"未去冗余比较GO.csv",row.names =F)
+
+eKEGG <- compareCluster(gene = genes,#显著差异表达基因的Ensembl ID
+                       OrgDb=org.Dm.eg.db,     #注释数据库        #富集的GO条目至少要包含10个基因，可以修改
+                       fun           = "enrichKEGG",
+                       keyType='SYMBOL')
+
+##########画图#########
+dotplot(ego2, showCategory=10,includeAll=TRUE,title = "GO Enrichment Analysis")
+ggsave("compareGO.tiff")
+
+P<- dotplot(ego2, split="ONTOLOGY",showCategory = 10,title = "GO Enrichment Analysis")
+P2<- P+scale_color_continuous(low='#EE0000', high='#00468B')#+aes(shape=p.adjust < 0.001)
+    + theme(axis.text.x = element_text(color="black", size=10), #修改X轴的元素格式，size修改横纵坐标轴上文字大小，color设置颜色，angle设置角度,face粗体 斜体，family 字体
+            axis.text.y = element_text(color="black",size=10))
+
+P2
+
+
+ego3<- simplify(ego2,cutoff=0.7,by="p.adjust",select_fun=min)
+P去冗余<- dotplot(ego3, split="ONTOLOGY",showCategory = 10)
+P去冗余画图<- P去冗余+scale_color_continuous(low='#EE0000', high='#00468B')#+aes(shape=p.adjust < 0.001)
++ theme(axis.text.x = element_text(color="black", size=10), #修改X轴的元素格式，size修改横纵坐标轴上文字大小，color设置颜色，angle设置角度,face粗体 斜体，family 字体
+        axis.text.y = element_text(color="black",size=10))
+P去冗余画图
+
+write.csv(as.data.frame(ego3),"去冗余比较GO.csv",row.names =F)
+
+dotplot(ego3, showCategory=10,includeAll=TRUE)
+
+
+ego222<- pairwise_termsim(ego2)
+
+
+
+heatplot(ego2,showCategory =5,foldChange=FCgenelist)
+upsetplot(ego2,showCategory=10,)
+cnetplot(ego2,showCategory=2,circular=TRUE,colorEdge=TRUE,legend_n=2,pie="count", pie_scale=1.5, layout="kk")
+emapplot(ego2)
+emapplot(ego3) 
+ridgeplot(ego2)
+
+##########画图###################画图###################画图#########
+
+files<- getSampleFiles()
+
+peakAnnoList <- lapply(files, annotatePeak, TxDb=txdb,
+                       tssRegion=c(-3000, 3000),  annoDb="org.Dm.eg.db")
+c929= lapply(peakAnnoListc992, function(i) as.data.frame(i)$SYMBOL)
+DVpdf= lapply(peakAnnoListDVpdf, function(i) as.data.frame(i)$SYMBOL)
+R11H18= lapply(peakAnnoListR11H18, function(i) as.data.frame(i)$SYMBOL)
+R6= lapply(peakAnnoListR6, function(i) as.data.frame(i)$SYMBOL)
+
+
+
+
+ego5 <- enrichGO(gene= c929,
+                   OrgDb= org.Dm.eg.db,
+                   ont = "ALL",
+                  pAdjustMethod = "BH",   
+                  minGSSize = 10,
+                maxGSSize = 500,
+                pvalueCutoff = 0.01,
+                qvalueCutoff = 0.01, 
+                keyType='SYMBOL')
+
+
+
+
+dotplot(egoc929, split="ONTOLOGY",showCategory = 10)
+
+P<- dotplot(ego, split="ONTOLOGY",showCategory = 5)
+P2<- P+scale_color_continuous(low='#8DA1CB', high='#FD8D62')+aes(shape=p.adjust > 0.001)+ theme(axis.text.x = element_text(color="black", size=10) #修改X轴的元素格式，size修改横纵坐标轴上文字大小，color设置颜色，angle设置角度,face粗体 斜体，family 字体
+                                                                                                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+######################
+#############
+#####################
+
+
+vennplot(genes)
+vennplot(genes, by='Vennerable')
+ggsave("Vennplot.tiff")
+####??enrichment anayl KEGG
+pathway1 <- enrichPathway(as.data.frame(peakAnnolist)$geneId)
+head(pathway1, 2)
+
+
+
+
+
+
+
+
+
+
+gene2 = lapply(peakAnnoList, function(i) as.data.frame(i)$geneID)
+names(genes) = sub("_", "\n", names(genes))
+compKEGG <- compareCluster(genes,
+                           fun           = "enrichKEGG",
+                           pvalueCutoff  = 0.05,
+                           pAdjustMethod = "BH")
+
+
+dotplot(compKEGG, showCategory = 15, title = "KEGG Pathway Enrichment Analysis")
+
+
+Dm_msigdbr <- msigdbr(species="Drosophila melanogaster")
+head(Dm_msigdbr, 2) %>% as.data.frame
+DmGO <- msigdbr(species="Drosophila melanogaster",category="C5") %>% 
+  +   dplyr::select(gs_name, entrez_gene, gene_symbol)
+
+select(org.Dm.eg.db,keys="mle",keytype="SYMBOL", columns=c("ENTREZID"))
+
+columns(org.Dm.eg.db)
+Dm <- org.Dm.eg.db
+head(keys(org.Dm.eg.db))
+length(keys(Dm))
+length(keys(Dm,"SYMBOL"))
+select(org.Dm.eg.db,keys="mle",keytype="SYMBOL", columns=c("ENTREZID"))
+groupGO(genes, org.Dm.eg.db, keyType = "ENTREZID", ont = "CC", level = 2, readable = FALSE)
+
+
+
+
+plotAnnoPie(peakAnnoListc992)
+#######??peak??ͼ
+promoter <- getPromoters(TxDb=txdb, upstream=3000, downstream=3000,by="transcript")
+######???黭??ͼ
+peakHeatmap(files, TxDb=txdb, 
+            upstream=3000, downstream=3000, 
+            color=rainbow(length(files)))
+
+promoter <- getPromoters(TxDb=txdb, 
+                         upstream=3000, downstream=3000)
+tagMatrix <- getTagMatrix(peakAnnoList, 
+                          windows=promoter)
+############
+######??????????
+
+exon<- getBioRegion(TxDb = txdb, upstream = 3000, downstream = 3000, by = "exon")
+intron <- getBioRegion(TxDb=fly, 
+                         upstream=3000, downstream=3000)
+tagMatrix <- getTagMatrix(peakAnnoList, 
+                          windows=promoter,flip_minor_strand = TRUE)
+
+tagMatrixList <- getTagMatrix(files, getBioRegion, 
+                        windows=transcript)
+plotAvgProf(tagMatrixlist, xlim=c(-3000, 3000))
+#########
+plotPeakProf2(peak = peak, upstream = rel(0.2), downstream = rel(0.2),
+              conf = 0.95, by = "gene", type = "body", nbin = 800,
+              TxDb = txdb, ignore_strand = F)
+
+
+plotAvgProf(tagMatrixList, xlim=c(-3000, 3000))
+
+tagHeatmap(tagMatrixList, xlim=c(-3000, 3000), color=NULL)
+
+
+plotAvgProf(tagMatrixList, xlim=c(-3000, 3000), 
+            conf=0.95,resample=500, facet="row")
+#########f富集分析########
+gene2 = lapply(peakAnnoList, function(i) as.data.frame(i)$ENTREZID)
+
+library(clusterProfiler)
+library(ggplot2)
+
+# Run GO enrichment analysis 
+ego <- enrichGO(gene = gene2$SYMBOL, 
+                keytype = "FlybaseID", 
+                OrgDb = org.Dm.eg.db, 
+                ont = "BP", 
+                pAdjustMethod = "BH", 
+                qvalueCutoff = 0.05, 
+                readable = TRUE)
+
+gene.df <- bitr(genes,fromType="FLYBASECG",toType=c("ENTREZID","ENSEMBL"),
+                +                 OrgDb = org.Dm.eg.db)
+
+#???Լ?????ע??
+Head <- readPeakFile('Head2-0.05_summits.bed')
+Testis <- readPeakFile('Testis-0.05_summits.bed')
+peaks <- list(Head = Head, Testis = Testis)
+Peak<- readPeakFile("Head")
+#??????Ĭ?Ϻ???ע??
+file2<- getSampleFiles()
+#??ȡhead2 peak
+peak<- readPeakFile(files[[2]])
+peakTstis2<- readPeakFile(files[[3]])
+promoter <- getPromoters(TxDb=txdb, upstream=3000, downstream=3000,by="gene")
+tagMatrix<- getTagMatrix(files, windows=promoter)
+#?????ظ?2
+tagMatrix<- getTagMatrix(file2, windows=promoter)
+
+tagHeatmap(tagMatrixList, xlim =c(-3000, 3000), color="green")
+
+peakHeatmap(files, weightCol="V5", TxDb=fly, 
+            upstream=3000, downstream=3000, 
+            color=rainbow(length("Head","Testis")))
+
+peakHeatmap(files, weightCol="V5", TxDb=fly, 
+            upstream=3000, downstream=3000, 
+            color=rainbow(length(files)))
+
+
+
+plotAvgProf(tagMatrix, xlim=c(-3000, 3000),
+            xlab="Genomic Region (5'->3')", 
+            ylab = "Read Count Frequency")
+#ͬ??????????Ҳ֧?ֶ??????ݵıȽ?:
+tagMatrixList <- lapply(files, getTagMatrix, 
+                        windows=promoter)
+plotAvgProf(tagMatrixList, xlim=c(-3000, 3000))
+#???????з???չʾ????ȻҲ֧?ֹ��?????????
+
+plotAvgProf(tagMatrixList, xlim=c(-3000, 3000), 
+            conf=0.95,resample=500, facet="row")
+
+#??ȡ??????????
+
+gene<- getBioRegion(TxDb=fly, upstream=3000, downstream=3000,by="gene")
+tagMatrixList <- lapply(files, getTagMatrix, 
+                        windows=gene)
+#?????ӷ???չʾ
+plotAvgProf(tagMatrixList, xlim=c(-3000, 3000),conf=0.95,resample=500, facet="row")
+
+tagMatrix<- getTagMatrix(files,windows=exon)
+#??????????
+
+intron<- getBioRegion(TxDb=fly, upstream=3000, downstream=3000,by="intron")
+tagMatrixList <- lapply(files, getTagMatrix, 
+                        windows=intron)
+plotAvgProf(tagMatrixList, xlim=c(-3000, 3000),resample=500, facet="row")
+##########################################
+files <- getSampleFiles()
+peak <- readPeakFile(files[[2]])
+promoter <- getPromoters(TxDb=fly                        upstream=3000, downstream=3000)
+tagMatrix <- getTagMatrix(peak, 
+                          windows=promoter)
+
+
+
+peakHeatmap(files, weightCol="V5", TxDb=fly, 
+            upstream=3000, downstream=3000, 
+            color=rainbow(length(files)),verbose = TRUE)
+
+
+
+
+
+#??vnͼ
+files
+peakAnnoList <- lapply(files, asnotatePeak, 
+                       TxDb=fly,txdbRegion=c(-3000, 3000))
+peakAnnoList3 <- lapply(files, annotatePeak, 
+                       TxDb=txdb,tssRegion=c(-3000, 3000))
+plotplotAnnoBar(peakAnnoList)
+plotDistToTSS(peakAnnoList)
+genes <- lapply(penoList, function(i) 
+  as.data.frame(i)$geneId)
+vennplot(genes[1:2], by='Vennerable')
+compute.Venn()
+
+pea
+kAnnoList <- lapply(files, annotatePeak, 
+                       TxDb=txdb,tssRegion=c(-3000, 3000))
+
+
+genes <- lapply(peakAnnoList, function(i) 
+  as.data.frame(i)$geneId)
+vennplot(genes[1:3],by='ggVennDiagram')
+
+
+
+write.table(peakAnnoList[2], file = 'CBX6.xls',sep = '\t', quote = FALSE, row.names = FALSE)
+
+
+
+
+
+
+
+peakAnnoList <- lapply(files, annotatePeak,TxDb=fly,tssRegion=c(-3000, 3000),verbose=FALSE,addFlankGeneInfo=TRUE,flankDistance=5000,annoDb="org.Dm.eg.db")
+warnings()
+write.table(peakAnnoList[1], file = 'Head4.xls')
+write.table(peakAnnoList[2], file = 'Testis2.xls',sep = '\t', quote = FALSE, row.names = FALSE)
+
+peakHeatmap(peaks, weightCol="V5", TxDb=fly, 
+            upstream=3000, downstream=3000, 
+            color=rainbow(length("Head","Testis")))
+plotAvgProf(peakAnnoList, xlim=c(-3000, 3000),xlab="Genomic Region (5'->3')", ylab = "Read Count Frequency")
+promoter <- getPromoters(TxDb=fly, upstream=3000, downstream=3000)
+tagMatrix<- getTagMatrix(Head, windows=promoter)
+tagHeatmap(peakAnnoList, xlim =c(-3000, 3000), color="red")
+
+plotAvgProf(peakAnnoList, xlim=c(-3000, 3000),xlab="Genomic Region (5'->3')", ylab = "Read Count Frequency")
+
+
+
+
+
+
+
+plotAnnoBar(peakAnnoList)
+venntAnnoPie(peakAnnoList)
+plotDistToTSS(peakAnnoList)
+
+tagHeatmap(peakAnnoList,xlim=c(-3000, 3000), 
+ )
+
+
+covplot(peakbodyclk2,chrs = c("2L","2R","3L","3R","X","Y"),weightCol="V5") + facet_grid(2L:3304100,3317418 )
+
+peak=GenomicRanges::GRangesList(Headclk1=readPeakFile(files[[2]]),Headclk2=readPeakFile(files[[3]]),Head=readPeakFile(files[[1]]))
+covplot(peak,chrs = c("2L"),xlim=c(3493986,3508119), weightCol="V5") + facet_grid(chr ~ .id)
+
+
+
+peak=GenomicRanges::GRangesList(head=head,Testis=Testis)
+covplot(peaks,chrs = c("2L","2R","3L","3R","X","Y"),weightCol="V5") + facet_grid(chr ~ .id)
+
+promoter <- getPromoters(TxDb=fly, upstream=3000, downstream=3000)
+tagMatrix <- getTagMatrix(head, windows=promoter)
+tagHeatmap(tagMatrix, xlim =c(-3000, 3000), color="red")
+plotAvgProf(tagMatrix, xlim=c(-3000, 3000),xlab="Genomic Region (5'->3')", ylab = "Read Count Frequency",conf=0.95, resample=500, facet="row")
+
+
+
+
+       
+
+
+
+
+
+
+
